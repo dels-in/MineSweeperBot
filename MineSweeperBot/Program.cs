@@ -25,7 +25,7 @@ Console.WriteLine(token);
 
 var botClient = new TelegramBotClient(token!);
 
-var gameId = 0;
+int gameId;
 var remove = new ReplyKeyboardRemove();
 var games = new Dictionary<GameKey, GameBoard>();
 var stopwatch = new Stopwatch();
@@ -205,12 +205,12 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
         );
         await botClient.DeleteMessageAsync
         (
-            chatId: callbackQuery.From.Id,
+            chatId: userId,
             messageId: callbackQuery.Message!.MessageId
         );
         await botClient.SendTextMessageAsync
         (
-            chatId: callbackQuery.From.Id,
+            chatId: userId,
             text: "Новый трай, huh?",
             replyMarkup: replyKeyboardHello
         );
@@ -259,7 +259,7 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
             );
             break;
         default:
-            await HandleMove(botClient, callbackQuery, callbackQuery.From.Id, gameId, row, colomn, flag);
+            await HandleMove(botClient, callbackQuery, callbackQuery.From.Id, row, colomn, flag);
             if (check)
             {
                 await botClient.EditMessageReplyMarkupAsync
@@ -274,7 +274,7 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
     }
 }
 
-async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery, long userId, int gameId, int row,
+async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery, long userId, int row,
     int colomn, bool flag)
 {
     try
@@ -326,7 +326,7 @@ async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery,
                         continue;
 
                     if (i >= 0 && j >= 0 && i < game.Rows && j < game.Colomns && game.Hidden[i, j])
-                        await HandleMove(botClient, callbackQuery, userId, gameId, i, j, false);
+                        await HandleMove(botClient, callbackQuery, userId, i, j, false);
                 }
             }
         }
@@ -414,7 +414,6 @@ void SetNumber(int i, GameKey gameKey, int row, int colomn)
 GameKey NewGame(long userId, GameBoard game)
 {
     gameId = games.Count;
-    //gameKey.UserId = userId;
     gameKey = new GameKey(userId, gameId);
     games.Add(gameKey, game);
     return gameKey;

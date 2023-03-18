@@ -1,35 +1,29 @@
-using System.ComponentModel;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MineSweeperBot;
 
 public class GameBoard
 {
-    public int Rows;
-    public int Colomns;
-    public int Mines;
+    public readonly int Rows;
+    public readonly int Colomns;
     private List<InlineKeyboardButton[]> _inlineBoard = new();
-    public List<bool[,]> Numbers;
-
-    public bool[,] One { get; set; }
-    public bool[,] Two { get; set; }
-    public bool[,] Three { get; set; }
-    public bool[,] Four { get; set; }
-    public bool[,] Five { get; set; }
-    public bool[,] Six { get; set; }
-    public bool[,] Seven { get; set; }
-    public bool[,] Eight { get; set; }
-    public bool[,] Board { get; set; }
-    public bool[,] Hidden { get; set; }
-    public bool[,] Flagged { get; set; }
+    public readonly List<bool[,]> Numbers;
+    private bool[,] One { get; set; }
+    private bool[,] Two { get; set; }
+    private bool[,] Three { get; set; }
+    private bool[,] Four { get; set; }
+    private bool[,] Five { get; set; }
+    private bool[,] Six { get; set; }
+    private bool[,] Seven { get; set; }
+    private bool[,] Eight { get; set; }
+    private bool[,] Board { get; }
+    public bool[,] Hidden { get; }
+    public bool[,] Flagged { get; }
 
     public GameBoard(int rows, int colomns, int mines)
     {
         Rows = rows;
         Colomns = colomns;
-        Mines = mines;
         Board = new bool[Rows, Colomns];
         Hidden = new bool[Rows, Colomns];
         Flagged = new bool[Rows, Colomns];
@@ -61,7 +55,7 @@ public class GameBoard
         }
 
         Random rand = new Random();
-        for (var i = 0; i < Mines; i++)
+        for (var i = 0; i < mines; i++)
         {
             var row = rand.Next(0, Rows - 1);
             var colomn = rand.Next(0, Colomns);

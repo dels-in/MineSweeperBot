@@ -2,8 +2,8 @@ namespace MineSweeperBot;
 
 public class GameKey
 {
-    public long UserId { get; set; }
-    public int GameId { get; set; }
+    private long UserId { get; }
+    private int GameId { get; }
 
     public GameKey(long userId, int gameId)
     {
