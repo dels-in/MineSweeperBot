@@ -178,7 +178,7 @@ public class GameBoard
         {
             _inlineBoard.Add(new[]
             {
-                InlineKeyboardButton.WithCallbackData(text: "Ставишь флаг", callbackData: "flag"),
+                InlineKeyboardButton.WithCallbackData(text: " Активно ставишь  🚩 ", callbackData: "flag"),
                 InlineKeyboardButton.WithCallbackData(text: "Закончить игру 🧨", callbackData: "exit")
             });
         }
