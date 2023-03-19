@@ -10,9 +10,9 @@ using static System.Int32;
 
 using CancellationTokenSource cts = new();
 
-var userFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);   
+var userFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 var currentFolder = new[]
-    { userFolder, "RiderProjects", "MineSweeperBot"};
+    { userFolder, "RiderProjects", "MineSweeperBot" };
 var dir = Path.Combine(currentFolder);
 var textFile = Path.Combine(dir, "Token.txt");
 
@@ -84,6 +84,19 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         case UpdateType.CallbackQuery:
             await OnAnswer(botClient, update.CallbackQuery!, update.CallbackQuery!.From.Id);
             break;
+        case UpdateType.Unknown:
+        case UpdateType.InlineQuery:
+        case UpdateType.ChosenInlineResult:
+        case UpdateType.EditedMessage:
+        case UpdateType.ChannelPost:
+        case UpdateType.EditedChannelPost:
+        case UpdateType.ShippingQuery:
+        case UpdateType.PreCheckoutQuery:
+        case UpdateType.Poll:
+        case UpdateType.PollAnswer:
+        case UpdateType.MyChatMember:
+        case UpdateType.ChatMember:
+        case UpdateType.ChatJoinRequest:
         default:
             await botClient.SendTextMessageAsync
             (
@@ -97,7 +110,15 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
 async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
 {
     if (message.Type != MessageType.Text)
+    {
+        await botClient.SendTextMessageAsync
+        (
+            chatId: message.Chat.Id,
+            text: "Такое остается в игноре"
+        );
+
         return;
+    }
 
     var user = message.From;
     var chatId = message.Chat.Id;
