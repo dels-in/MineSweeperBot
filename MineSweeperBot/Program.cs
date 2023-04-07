@@ -25,14 +25,12 @@ Console.WriteLine(token);
 
 var botClient = new TelegramBotClient(token!);
 
-int gameId;
 var remove = new ReplyKeyboardRemove();
-var games = new Dictionary<GameKey, GameBoard>();
 var stopwatch = new Stopwatch();
+var games = new Dictionary<long,GameBoard>();
 var flag = false;
 bool check;
 
-GameKey gameKey = null!;
 GameBoard gameBoard;
 
 ReplyKeyboardMarkup replyKeyboardHello = new(new[]
@@ -73,16 +71,16 @@ Console.ReadLine();
 
 cts.Cancel();
 
-async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
 {
     check = true;
     switch (update.Type)
     {
         case UpdateType.Message:
-            await BotOnMessageReceived(botClient, update.Message!);
+            await BotOnMessageReceived(bot, update.Message!);
             break;
         case UpdateType.CallbackQuery:
-            await OnAnswer(botClient, update.CallbackQuery!, update.CallbackQuery!.From.Id);
+            await OnAnswer(bot, update.CallbackQuery!, update.CallbackQuery!.From.Id);
             break;
         case UpdateType.Unknown:
         case UpdateType.InlineQuery:
@@ -98,7 +96,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         case UpdateType.ChatMember:
         case UpdateType.ChatJoinRequest:
         default:
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: update.Message!.Chat.Id,
                 text: "Такое остается в игноре"
@@ -107,11 +105,11 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
     }
 }
 
-async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
+async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
 {
     if (message.Type != MessageType.Text)
     {
-        await botClient.SendTextMessageAsync
+        await bot.SendTextMessageAsync
         (
             chatId: message.Chat.Id,
             text: "Такое остается в игноре"
@@ -122,7 +120,6 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
 
     var user = message.From;
     var chatId = message.Chat.Id;
-    GameBoard game;
 
     Console.WriteLine($"Receive message type: {message.Type}");
     Console.WriteLine($"Received a '{message.Text}' message in chat {chatId} from @{user!.Username}");
@@ -131,7 +128,7 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
     switch (action)
     {
         case "/start":
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Привет, это игра \"Сапёр\". \nПеред игрой ознакомься с правилами.",
@@ -139,7 +136,7 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
             );
             break;
         case "Начать игру":
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Выбери уровень сложности",
@@ -147,7 +144,7 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
             );
             break;
         case "Правила":
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Правила просты, я или ты... \n" +
@@ -157,19 +154,17 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
             );
             break;
         case "Монки-мэн":
-            flag = false;
             gameBoard = new GameBoard(6, 5, 5);
-            gameKey = NewGame(user.Id, gameBoard);
-            game = games[gameKey];
-            var inlineKeyboardMonkey = new InlineKeyboardMarkup(game.CreateBoard(false));
+            var monkey = NewGame(user.Id, gameBoard);
+            var inlineKeyboardMonkey = new InlineKeyboardMarkup(monkey.CreateBoard(false));
             stopwatch.Start();
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Всем монкам - поехали!",
                 replyMarkup: remove
             );
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "И помни: главное - участие",
@@ -177,19 +172,17 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
             );
             break;
         case "Жоский чел":
-            flag = false;
             gameBoard = new GameBoard(10, 8, 12);
-            gameKey = NewGame(user.Id, gameBoard);
-            game = games[gameKey];
-            var inlineKeyboardJoski = new InlineKeyboardMarkup(game.CreateBoard(false));
+            var joski = NewGame(user.Id, gameBoard);
+            var inlineKeyboardJoski = new InlineKeyboardMarkup(joski.CreateBoard(false));
             stopwatch.Start();
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Жоский чел, уверенный. Покажи себя",
                 replyMarkup: remove
             );
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "И помни: главное - победа",
@@ -197,39 +190,39 @@ async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
             );
             break;
         case "Лучшие гвардейцы":
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "In progress...zZz"
             );
             break;
         default:
-            await Echo(botClient, message);
+            await Echo(bot, message);
             break;
     }
 }
 
-async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, long userId)
+async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId)
 {
     TryParse(callbackQuery.Data![0].ToString(), out var row);
     TryParse(callbackQuery.Data![1].ToString(), out var colomn);
-    var game = games[gameKey];
+    var game = games[userId];
     if (game.IsGameWon())
     {
         stopwatch.Stop();
-        await botClient.AnswerCallbackQueryAsync
+        await bot.AnswerCallbackQueryAsync
         (
             callbackQueryId: callbackQuery.Id,
             text: "Winner, winner chicken dinner!" +
                   $"\n{stopwatch.ElapsedMilliseconds / 1000} секунд. Похвально, гвардеец",
             showAlert: true
         );
-        await botClient.DeleteMessageAsync
+        await bot.DeleteMessageAsync
         (
             chatId: userId,
             messageId: callbackQuery.Message!.MessageId
         );
-        await botClient.SendTextMessageAsync
+        await bot.SendTextMessageAsync
         (
             chatId: userId,
             text: "Новый трай, huh?",
@@ -243,7 +236,7 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
     {
         case "flag":
             flag = !flag;
-            await botClient.EditMessageReplyMarkupAsync
+            await bot.EditMessageReplyMarkupAsync
             (
                 chatId: callbackQuery.From.Id,
                 messageId: callbackQuery.Message!.MessageId,
@@ -259,7 +252,7 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
                 }
             }
 
-            await botClient.EditMessageReplyMarkupAsync
+            await bot.EditMessageReplyMarkupAsync
             (
                 chatId: callbackQuery.From.Id,
                 messageId: callbackQuery.Message!.MessageId,
@@ -267,12 +260,12 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
             );
 
             Thread.Sleep(2000);
-            await botClient.DeleteMessageAsync
+            await bot.DeleteMessageAsync
             (
                 chatId: callbackQuery.From.Id,
                 messageId: callbackQuery.Message!.MessageId
             );
-            await botClient.SendTextMessageAsync
+            await bot.SendTextMessageAsync
             (
                 chatId: callbackQuery.From.Id,
                 text: "Новый трай, huh?",
@@ -280,10 +273,10 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
             );
             break;
         default:
-            await HandleMove(botClient, callbackQuery, callbackQuery.From.Id, row, colomn, flag);
+            await HandleMove(bot, callbackQuery, callbackQuery.From.Id, row, colomn, flag);
             if (check)
             {
-                await botClient.EditMessageReplyMarkupAsync
+                await bot.EditMessageReplyMarkupAsync
                 (
                     chatId: callbackQuery.From.Id,
                     messageId: callbackQuery.Message!.MessageId,
@@ -295,15 +288,15 @@ async Task OnAnswer(ITelegramBotClient botClient, CallbackQuery callbackQuery, l
     }
 }
 
-async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery, long userId, int row,
+async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId, int row,
     int colomn, bool flag)
 {
     try
     {
-        if (!games.ContainsKey(gameKey))
+        if (!games.ContainsKey(userId))
             throw new Exception("Неверный ID");
 
-        var game = games[gameKey];
+        var game = games[userId];
 
         if (game.Hidden[row, colomn] == false)
         {
@@ -323,7 +316,7 @@ async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery,
         if (game.IsMine(row, colomn) && !game.Flagged[row, colomn])
         {
             stopwatch.Stop();
-            await botClient.AnswerCallbackQueryAsync
+            await bot.AnswerCallbackQueryAsync
             (
                 callbackQueryId: callbackQuery.Id,
                 text: "Погиб :D",
@@ -332,7 +325,7 @@ async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery,
 
             check = false;
             callbackQuery.Data = "exit";
-            await OnAnswer(botClient, callbackQuery, userId);
+            await OnAnswer(bot, callbackQuery, userId);
 
             throw new Exception("Погиб :D");
         }
@@ -347,78 +340,16 @@ async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery,
                         continue;
 
                     if (i >= 0 && j >= 0 && i < game.Rows && j < game.Colomns && game.Hidden[i, j])
-                        await HandleMove(botClient, callbackQuery, userId, i, j, false);
+                        await HandleMove(bot, callbackQuery, userId, i, j, false);
                 }
             }
         }
 
-        if (game.GetNeighborMineCount(row, colomn) == 1)
+        var list = new List<int>(new[]{1,2,3,4,5,6,7,8});
+        foreach (var i in list.Where(i => game.GetNeighborMineCount(row, colomn) == i))
         {
-            SetNumber(0, gameKey, row, colomn);
+            games[userId].Numbers[i-1][row, colomn] = true;
         }
-
-        if (game.GetNeighborMineCount(row, colomn) == 2)
-        {
-            SetNumber(1, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 3)
-        {
-            SetNumber(2, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 4)
-        {
-            SetNumber(3, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 5)
-        {
-            SetNumber(4, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 6)
-        {
-            SetNumber(5, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 7)
-        {
-            SetNumber(6, gameKey, row, colomn);
-        }
-
-        if (game.GetNeighborMineCount(row, colomn) == 8)
-        {
-            SetNumber(7, gameKey, row, colomn);
-        }
-
-        // switch (game.GetNeighborMineCount(row, colomn))
-        // {
-        //     case 1:
-        //         await SetNumber(1, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 2:
-        //         await SetNumber(2, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 3:
-        //         await SetNumber(3, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 4:
-        //         await SetNumber(4, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 5:
-        //         await SetNumber(5, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 6:
-        //         await SetNumber(6, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 7:
-        //         await SetNumber(7, callbackQuery, gameId, row, colomn);
-        //         break;
-        //     case 8:
-        //         await SetNumber(8, callbackQuery, gameId, row, colomn);
-        //         break;
-        // }
     }
     catch (Exception e)
     {
@@ -426,23 +357,18 @@ async Task HandleMove(ITelegramBotClient botClient, CallbackQuery callbackQuery,
     }
 }
 
-void SetNumber(int i, GameKey gameKey, int row, int colomn)
+GameBoard NewGame(long userId, GameBoard game)
 {
-    var game = games[gameKey];
-    game.Numbers[i][row, colomn] = true;
+    flag = false;
+    if (games.ContainsKey(userId))
+        games.Remove(userId);
+    games.Add(userId, game);
+    return game;
 }
 
-GameKey NewGame(long userId, GameBoard game)
+async Task Echo(ITelegramBotClient bot, Message message)
 {
-    gameId = games.Count;
-    gameKey = new GameKey(userId, gameId);
-    games.Add(gameKey, game);
-    return gameKey;
-}
-
-async Task Echo(ITelegramBotClient botClient, Message message)
-{
-    await botClient.SendTextMessageAsync
+    await bot.SendTextMessageAsync
     (
         chatId: message.Chat.Id,
         text: $"{message.Text}",
@@ -450,7 +376,7 @@ async Task Echo(ITelegramBotClient botClient, Message message)
     );
 }
 
-Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,
+Task HandlePollingErrorAsync(ITelegramBotClient bot, Exception exception,
     CancellationToken cancellationToken)
 {
     var errorMessage = exception switch

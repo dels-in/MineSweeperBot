@@ -1,3 +1,5 @@
+using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MineSweeperBot;
@@ -30,7 +32,7 @@ public class GameBoard
 
         Numbers = new List<bool[,]>(new[] { One, Two, Three, Four, Five, Six, Seven, Eight }!);
 
-        for (var j = 0; j < Numbers.Count; j++)
+        for (var j = 0; j < Numbers!.Count; j++)
         {
             for (var i = 0; i < Numbers.Count; i++)
             {
@@ -39,7 +41,7 @@ public class GameBoard
         }
 
 
-        for (int i = 0; i < Rows; i++)
+        for (var i = 0; i < Rows; i++)
         {
             for (int j = 0; j < Colomns; j++)
             {
@@ -54,7 +56,7 @@ public class GameBoard
             }
         }
 
-        Random rand = new Random();
+        var rand = new Random();
         for (var i = 0; i < mines; i++)
         {
             var row = rand.Next(0, Rows - 1);
@@ -91,7 +93,7 @@ public class GameBoard
 
     public bool IsGameWon()
     {
-        for (var i = 0; i < Rows-1; i++)
+        for (var i = 0; i < Rows - 1; i++)
         {
             for (var j = 0; j < Colomns; j++)
             {
@@ -115,52 +117,31 @@ public class GameBoard
             {
                 if (Hidden[row, colomn] && !Flagged[row, colomn])
                     inlineColomn.Add(
-                        InlineKeyboardButton.WithCallbackData(text: "⬛", callbackData: $"{row}{colomn}"));
+                        InlineKeyboardButton.WithCallbackData("⬛", $"{row}{colomn}"));
                 if (Hidden[row, colomn] && Flagged[row, colomn])
                     inlineColomn.Add(
-                        InlineKeyboardButton.WithCallbackData(text: "🚩", callbackData: $"{row}{colomn}"));
+                        InlineKeyboardButton.WithCallbackData("🚩", $"{row}{colomn}"));
 
                 switch (Hidden[row, colomn])
                 {
                     case false when Board[row, colomn]:
                         inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "💣", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[0][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "1️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[1][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "2️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[2][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "3️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[3][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "4️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[4][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "5️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[5][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "6️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[6][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "7️⃣️", callbackData: $"{row}{colomn}"));
-                        break;
-                    case false when Numbers[7][row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: "8️⃣️", callbackData: $"{row}{colomn}"));
+                            InlineKeyboardButton.WithCallbackData("💣", $"{row}{colomn}"));
                         break;
                     case false:
+                        var text = new List<string>(new[]
+                            { "1️⃣️", "2️⃣️", "3️⃣️", "4️⃣️", "5️⃣️", "6️⃣️", "7️⃣️", "8️⃣️" });
+                        for (var i = 0; i < 7; i++)
+                        {
+                            if (!Numbers[i][row, colomn]) continue;
+                            inlineColomn.Add(
+                                InlineKeyboardButton.WithCallbackData(text[i], callbackData: $"{row}{colomn}"));
+                            goto Found;
+                        }
+
                         inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(text: " ", callbackData: $"{row}{colomn}"));
+                            InlineKeyboardButton.WithCallbackData(" ", $"{row}{colomn}"));
+                        Found:
                         break;
                 }
             }
@@ -184,7 +165,7 @@ public class GameBoard
                 InlineKeyboardButton.WithCallbackData(text: "Закончить игру 🧨", callbackData: "exit")
             });
         }
-        
+
         return _inlineBoard.ToArray();
     }
 }
