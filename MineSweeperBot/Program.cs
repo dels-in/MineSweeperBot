@@ -154,7 +154,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             );
             break;
         case "Монки-мэн":
-            gameBoard = new GameBoard(6, 5, 5);
+            gameBoard = new GameBoard(6, 5, 6);
             var monkey = NewGame(user.Id, gameBoard);
             var inlineKeyboardMonkey = new InlineKeyboardMarkup(monkey.CreateBoard(false));
             stopwatch.Start();
@@ -172,7 +172,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             );
             break;
         case "Жоский чел":
-            gameBoard = new GameBoard(10, 8, 12);
+            gameBoard = new GameBoard(10, 8, 15);
             var joski = NewGame(user.Id, gameBoard);
             var inlineKeyboardJoski = new InlineKeyboardMarkup(joski.CreateBoard(false));
             stopwatch.Start();
