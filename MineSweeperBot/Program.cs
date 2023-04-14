@@ -205,7 +205,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
 async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId)
 {
     TryParse(callbackQuery.Data![0].ToString(), out var row);
-    TryParse(callbackQuery.Data![1].ToString(), out var colomn);
+    TryParse(callbackQuery.Data![1].ToString(), out var column);
     var game = games[userId];
     if (game.IsGameWon())
     {
@@ -246,7 +246,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
         case "exit":
             for (var i = 0; i < game.Rows - 1; i++)
             {
-                for (var j = 0; j < game.Colomns; j++)
+                for (var j = 0; j < game.Columns; j++)
                 {
                     game.Hidden[i, j] = false;
                 }
@@ -273,7 +273,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
             );
             break;
         default:
-            await HandleMove(bot, callbackQuery, callbackQuery.From.Id, row, colomn, flag);
+            await HandleMove(bot, callbackQuery, callbackQuery.From.Id, row, column, flag);
             if (check)
             {
                 await bot.EditMessageReplyMarkupAsync
@@ -289,7 +289,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
 }
 
 async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId, int row,
-    int colomn, bool flag)
+    int column, bool flag)
 {
     try
     {
@@ -298,7 +298,7 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
 
         var game = games[userId];
 
-        if (game.Hidden[row, colomn] == false)
+        if (game.Hidden[row, column] == false)
         {
             check = false;
             return;
@@ -306,14 +306,14 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
 
         if (flag)
         {
-            game.Hidden[row, colomn] = true;
-            game.Flagged[row, colomn] = !game.Flagged[row, colomn];
+            game.Hidden[row, column] = true;
+            game.Flagged[row, column] = !game.Flagged[row, column];
             return;
         }
 
-        game.Hidden[row, colomn] = false;
+        game.Hidden[row, column] = false;
 
-        if (game.IsMine(row, colomn) && !game.Flagged[row, colomn])
+        if (game.IsMine(row, column) && !game.Flagged[row, column])
         {
             stopwatch.Stop();
             await bot.AnswerCallbackQueryAsync
@@ -330,25 +330,25 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
             throw new Exception("Погиб :D");
         }
 
-        if (game.GetNeighborMineCount(row, colomn) == 0)
+        if (game.GetNeighborMineCount(row, column) == 0)
         {
             for (var i = row - 1; i <= row + 1; i++)
             {
-                for (var j = colomn - 1; j <= colomn + 1; j++)
+                for (var j = column - 1; j <= column + 1; j++)
                 {
-                    if (i == row && j == colomn)
+                    if (i == row && j == column)
                         continue;
 
-                    if (i >= 0 && j >= 0 && i < game.Rows && j < game.Colomns && game.Hidden[i, j])
+                    if (i >= 0 && j >= 0 && i < game.Rows && j < game.Columns && game.Hidden[i, j])
                         await HandleMove(bot, callbackQuery, userId, i, j, false);
                 }
             }
         }
 
         var list = new List<int>(new[]{1,2,3,4,5,6,7,8});
-        foreach (var i in list.Where(i => game.GetNeighborMineCount(row, colomn) == i))
+        foreach (var i in list.Where(i => game.GetNeighborMineCount(row, column) == i))
         {
-            games[userId].Numbers[i-1][row, colomn] = true;
+            games[userId].Numbers[i-1][row, column] = true;
         }
     }
     catch (Exception e)

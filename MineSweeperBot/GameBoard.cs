@@ -7,7 +7,7 @@ namespace MineSweeperBot;
 public class GameBoard
 {
     public readonly int Rows;
-    public readonly int Colomns;
+    public readonly int Columns;
     private List<InlineKeyboardButton[]> _inlineBoard = new();
     public readonly List<bool[,]> Numbers;
     private bool[,] One { get; set; }
@@ -22,13 +22,13 @@ public class GameBoard
     public bool[,] Hidden { get; }
     public bool[,] Flagged { get; }
 
-    public GameBoard(int rows, int colomns, int mines)
+    public GameBoard(int rows, int columns, int mines)
     {
         Rows = rows;
-        Colomns = colomns;
-        Board = new bool[Rows, Colomns];
-        Hidden = new bool[Rows, Colomns];
-        Flagged = new bool[Rows, Colomns];
+        Columns = columns;
+        Board = new bool[Rows, Columns];
+        Hidden = new bool[Rows, Columns];
+        Flagged = new bool[Rows, Columns];
 
         Numbers = new List<bool[,]>(new[] { One, Two, Three, Four, Five, Six, Seven, Eight }!);
 
@@ -36,14 +36,14 @@ public class GameBoard
         {
             for (var i = 0; i < Numbers.Count; i++)
             {
-                Numbers[j] = new bool[Rows, Colomns];
+                Numbers[j] = new bool[Rows, Columns];
             }
         }
 
 
         for (var i = 0; i < Rows; i++)
         {
-            for (int j = 0; j < Colomns; j++)
+            for (int j = 0; j < Columns; j++)
             {
                 Board[i, j] = false;
                 Hidden[i, j] = true;
@@ -60,28 +60,28 @@ public class GameBoard
         for (var i = 0; i < mines; i++)
         {
             var row = rand.Next(0, Rows - 1);
-            var colomn = rand.Next(0, Colomns);
-            if (!Board[row, colomn])
-                Board[row, colomn] = true;
+            var column = rand.Next(0, Columns);
+            if (!Board[row, column])
+                Board[row, column] = true;
             else
                 i--;
         }
     }
 
-    public bool IsMine(int row, int colomn)
+    public bool IsMine(int row, int column)
     {
-        if (colomn < 0 || row < 0 || colomn >= Colomns || row >= Rows)
+        if (column < 0 || row < 0 || column >= Columns || row >= Rows)
             return false;
 
-        return Board[row, colomn];
+        return Board[row, column];
     }
 
-    public int GetNeighborMineCount(int row, int colomn)
+    public int GetNeighborMineCount(int row, int column)
     {
         var count = 0;
         for (var i = row - 1; i <= row + 1; i++)
         {
-            for (var j = colomn - 1; j <= colomn + 1; j++)
+            for (var j = column - 1; j <= column + 1; j++)
             {
                 if (IsMine(i, j))
                     count++;
@@ -95,7 +95,7 @@ public class GameBoard
     {
         for (var i = 0; i < Rows - 1; i++)
         {
-            for (var j = 0; j < Colomns; j++)
+            for (var j = 0; j < Columns; j++)
             {
                 if (Board[i, j] && !Flagged[i, j])
                     return false;
@@ -112,41 +112,41 @@ public class GameBoard
         _inlineBoard = new List<InlineKeyboardButton[]>();
         for (var row = 0; row < Rows - 1; row++)
         {
-            List<InlineKeyboardButton> inlineColomn = new();
-            for (var colomn = 0; colomn < Colomns; colomn++)
+            List<InlineKeyboardButton> inlineColumn = new();
+            for (var column = 0; column < Columns; column++)
             {
-                if (Hidden[row, colomn] && !Flagged[row, colomn])
-                    inlineColomn.Add(
-                        InlineKeyboardButton.WithCallbackData("⬛", $"{row}{colomn}"));
-                if (Hidden[row, colomn] && Flagged[row, colomn])
-                    inlineColomn.Add(
-                        InlineKeyboardButton.WithCallbackData("🚩", $"{row}{colomn}"));
+                if (Hidden[row, column] && !Flagged[row, column])
+                    inlineColumn.Add(
+                        InlineKeyboardButton.WithCallbackData("⬛", $"{row}{column}"));
+                if (Hidden[row, column] && Flagged[row, column])
+                    inlineColumn.Add(
+                        InlineKeyboardButton.WithCallbackData("🚩", $"{row}{column}"));
 
-                switch (Hidden[row, colomn])
+                switch (Hidden[row, column])
                 {
-                    case false when Board[row, colomn]:
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData("💣", $"{row}{colomn}"));
+                    case false when Board[row, column]:
+                        inlineColumn.Add(
+                            InlineKeyboardButton.WithCallbackData("💣", $"{row}{column}"));
                         break;
                     case false:
                         var text = new List<string>(new[]
                             { "1️⃣️", "2️⃣️", "3️⃣️", "4️⃣️", "5️⃣️", "6️⃣️", "7️⃣️", "8️⃣️" });
                         for (var i = 0; i < 7; i++)
                         {
-                            if (!Numbers[i][row, colomn]) continue;
-                            inlineColomn.Add(
-                                InlineKeyboardButton.WithCallbackData(text[i], callbackData: $"{row}{colomn}"));
+                            if (!Numbers[i][row, column]) continue;
+                            inlineColumn.Add(
+                                InlineKeyboardButton.WithCallbackData(text[i], callbackData: $"{row}{column}"));
                             goto Found;
                         }
 
-                        inlineColomn.Add(
-                            InlineKeyboardButton.WithCallbackData(" ", $"{row}{colomn}"));
+                        inlineColumn.Add(
+                            InlineKeyboardButton.WithCallbackData(" ", $"{row}{column}"));
                         Found:
                         break;
                 }
             }
 
-            _inlineBoard.Add(inlineColomn.ToArray());
+            _inlineBoard.Add(inlineColumn.ToArray());
         }
 
         if (setting)
