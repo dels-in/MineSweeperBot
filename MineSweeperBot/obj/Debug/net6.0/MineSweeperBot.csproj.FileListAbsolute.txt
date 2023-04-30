@@ -16,3 +16,6 @@
 /Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/obj/Debug/net6.0/MineSweeperBot.pdb
 /Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/obj/Debug/net6.0/MineSweeperBot.genruntimeconfig.cache
 /Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/obj/Debug/net6.0/ref/MineSweeperBot.dll
+/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/bin/Debug/net6.0/Dapper.dll
+/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/bin/Debug/net6.0/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/bin/Debug/net6.0/Npgsql.dll

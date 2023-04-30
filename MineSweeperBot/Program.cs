@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using MineSweeperBot;
+using MineSweeperBot.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -7,6 +9,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using static System.Int32;
+using Game = MineSweeperBot.Models.Game;
 
 using CancellationTokenSource cts = new();
 
@@ -27,9 +30,11 @@ var botClient = new TelegramBotClient(token!);
 
 var remove = new ReplyKeyboardRemove();
 var stopwatch = new Stopwatch();
-var games = new Dictionary<long,GameBoard>();
+var games = new Dictionary<long, GameBoard>();
 var flag = false;
 bool check;
+string difficulty = null;
+var me = await botClient.GetMeAsync();
 
 GameBoard gameBoard;
 
@@ -52,6 +57,15 @@ ReplyKeyboardMarkup replyKeyboardLevel = new(new[]
     OneTimeKeyboard = true
 };
 
+ReplyKeyboardMarkup replyKeyboardLeaderboard = new(new[]
+{
+    new KeyboardButton[] { "Монки-мэны", "Жоские челы" }
+})
+{
+    ResizeKeyboard = true,
+    OneTimeKeyboard = true
+};
+
 ReceiverOptions receiverOptions = new()
 {
     AllowedUpdates = Array.Empty<UpdateType>()
@@ -63,8 +77,6 @@ botClient.StartReceiving(
     receiverOptions: receiverOptions,
     cancellationToken: cts.Token
 );
-
-var me = await botClient.GetMeAsync();
 
 Console.WriteLine($"Start listening for @{me.Username}");
 Console.ReadLine();
@@ -80,7 +92,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             await BotOnMessageReceived(bot, update.Message!);
             break;
         case UpdateType.CallbackQuery:
-            await OnAnswer(bot, update.CallbackQuery!, update.CallbackQuery!.From.Id);
+            await OnAnswer(bot, update.CallbackQuery!, update.CallbackQuery!.From.Id, difficulty);
             break;
         case UpdateType.Unknown:
         case UpdateType.InlineQuery:
@@ -154,6 +166,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             );
             break;
         case "Монки-мэн":
+            difficulty = "Монки-мэн";
             gameBoard = new GameBoard(6, 5, 6);
             var monkey = NewGame(user.Id, gameBoard);
             var inlineKeyboardMonkey = new InlineKeyboardMarkup(monkey.CreateBoard(false));
@@ -172,6 +185,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             );
             break;
         case "Жоский чел":
+            difficulty = "Жоский чел";
             gameBoard = new GameBoard(10, 8, 15);
             var joski = NewGame(user.Id, gameBoard);
             var inlineKeyboardJoski = new InlineKeyboardMarkup(joski.CreateBoard(false));
@@ -193,8 +207,15 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
-                text: "In progress...zZz"
+                text: "Звания?",
+                replyMarkup: replyKeyboardLeaderboard
             );
+            break;
+        case "Жоские челы":
+            await SendLeaderboard(bot, chatId, false);
+            break;
+        case "Монки-мэны":
+            await SendLeaderboard(bot, chatId, true);
             break;
         default:
             await Echo(bot, message);
@@ -202,7 +223,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
     }
 }
 
-async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId)
+async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long userId, string difficulty)
 {
     TryParse(callbackQuery.Data![0].ToString(), out var row);
     TryParse(callbackQuery.Data![1].ToString(), out var column);
@@ -210,11 +231,12 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
     if (game.IsGameWon())
     {
         stopwatch.Stop();
+        var score = stopwatch.ElapsedMilliseconds / 1000;
         await bot.AnswerCallbackQueryAsync
         (
             callbackQueryId: callbackQuery.Id,
             text: "Winner, winner chicken dinner!" +
-                  $"\n{stopwatch.ElapsedMilliseconds / 1000} секунд. Похвально, гвардеец",
+                  $"\n{score} секунд. Похвально, гвардеец",
             showAlert: true
         );
         await bot.DeleteMessageAsync
@@ -229,6 +251,13 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
             replyMarkup: replyKeyboardHello
         );
         check = false;
+        var gameToAdd = new Game
+        {
+            Username = callbackQuery.From.Username ?? "Анон",
+            Difficulty = difficulty,
+            Score = score
+        };
+        await GameRepository.AddGame(gameToAdd);
         return;
     }
 
@@ -325,7 +354,7 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
 
             check = false;
             callbackQuery.Data = "exit";
-            await OnAnswer(bot, callbackQuery, userId);
+            await OnAnswer(bot, callbackQuery, userId, difficulty);
 
             throw new Exception("Погиб :D");
         }
@@ -345,10 +374,10 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
             }
         }
 
-        var list = new List<int>(new[]{1,2,3,4,5,6,7,8});
+        var list = new List<int>(new[] { 1, 2, 3, 4, 5, 6, 7, 8 });
         foreach (var i in list.Where(i => game.GetNeighborMineCount(row, column) == i))
         {
-            games[userId].Numbers[i-1][row, column] = true;
+            games[userId].Numbers[i - 1][row, column] = true;
         }
     }
     catch (Exception e)
@@ -388,4 +417,57 @@ Task HandlePollingErrorAsync(ITelegramBotClient bot, Exception exception,
 
     Console.WriteLine(errorMessage);
     return Task.CompletedTask;
+}
+
+async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
+{
+    var sb = new StringBuilder();
+    switch (level)
+    {
+        case true:
+        {
+            var leaderboardMonkey = await GameRepository.GetGamesMonkey(10);
+            await bot.SendTextMessageAsync
+            (
+                chatId: chatId,
+                text: "Это монки-мэны",
+                replyMarkup: remove
+            );
+            sb.AppendLine(@"| Id | Username | Сложность | Время |");
+            foreach (var game in leaderboardMonkey)
+            {
+                sb.AppendLine($"| {game.Id} | {game.Username} | {game.Difficulty} | {game.Score} |");
+            }
+
+            await bot.SendTextMessageAsync
+            (
+                chatId: chatId,
+                text: sb.ToString()
+            );
+            break;
+        }
+        case false:
+        {
+            var leaderboardJoski = await GameRepository.GetGamesJoski(10);
+            await bot.SendTextMessageAsync
+            (
+                chatId: chatId,
+                text: "Встречайте, жоские челы",
+                replyMarkup: remove
+            );
+            sb.AppendLine(@"| Id | Username | Сложность | Время |");
+            foreach (var game in leaderboardJoski)
+            {
+                sb.AppendLine($"| {game.Id} | {game.Username} | {game.Difficulty} | {game.Score} |");
+            }
+
+            await bot.SendTextMessageAsync
+            (
+                chatId: chatId,
+                text: sb.ToString(),
+                parseMode: ParseMode.MarkdownV2
+            );
+            break;
+        }
+    }
 }
