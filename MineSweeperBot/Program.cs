@@ -167,7 +167,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             break;
         case "Монки-мэн":
             difficulty = "Монки-мэн";
-            gameBoard = new GameBoard(6, 5, 6);
+            gameBoard = new GameBoard(6, 5, 5);
             var monkey = NewGame(user.Id, gameBoard);
             var inlineKeyboardMonkey = new InlineKeyboardMarkup(monkey.CreateBoard(false));
             stopwatch.Start();
@@ -342,7 +342,7 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
 
         game.Hidden[row, column] = false;
 
-        if (game.IsMine(row, column) && !game.Flagged[row, column])
+        if (game.IsMine(row, column)) 
         {
             stopwatch.Stop();
             await bot.AnswerCallbackQueryAsync
@@ -430,15 +430,14 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
-                text: "Это монки-мэны",
+                text: "Встречайте, монки-мэны",
                 replyMarkup: remove
             );
-            sb.AppendLine(@"| Id | Username | Сложность | Время |");
+            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Difficulty",-20}{"Score",-15}");
             foreach (var game in leaderboardMonkey)
             {
-                sb.AppendLine($"| {game.Id} | {game.Username} | {game.Difficulty} | {game.Score} |");
+                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Difficulty,-20}{game.Score,-15}");
             }
-
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
@@ -455,17 +454,15 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
                 text: "Встречайте, жоские челы",
                 replyMarkup: remove
             );
-            sb.AppendLine(@"| Id | Username | Сложность | Время |");
+            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Difficulty",-15}{"Score",-15}");
             foreach (var game in leaderboardJoski)
             {
-                sb.AppendLine($"| {game.Id} | {game.Username} | {game.Difficulty} | {game.Score} |");
+                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Difficulty,-20}{game.Score,-15}");
             }
-
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
-                text: sb.ToString(),
-                parseMode: ParseMode.MarkdownV2
+                text: sb.ToString()
             );
             break;
         }
