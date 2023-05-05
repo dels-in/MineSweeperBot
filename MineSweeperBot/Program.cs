@@ -170,7 +170,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             gameBoard = new GameBoard(6, 5, 5);
             var monkey = NewGame(user.Id, gameBoard);
             var inlineKeyboardMonkey = new InlineKeyboardMarkup(monkey.CreateBoard(false));
-            stopwatch.Start();
+            stopwatch.Restart();
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
@@ -189,7 +189,7 @@ async Task BotOnMessageReceived(ITelegramBotClient bot, Message message)
             gameBoard = new GameBoard(10, 8, 15);
             var joski = NewGame(user.Id, gameBoard);
             var inlineKeyboardJoski = new InlineKeyboardMarkup(joski.CreateBoard(false));
-            stopwatch.Start();
+            stopwatch.Restart();
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
@@ -254,10 +254,16 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
         var gameToAdd = new Game
         {
             Username = callbackQuery.From.Username ?? "Анон",
-            Difficulty = difficulty,
-            Score = score
+            Time = score
         };
-        await GameRepository.AddGame(gameToAdd);
+        if (difficulty=="Монки-мэн")
+        {
+            await GameRepository.AddGame(gameToAdd, true);
+        }
+        else
+        {
+            await GameRepository.AddGame(gameToAdd, false);
+        }
         return;
     }
 
@@ -273,6 +279,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
             );
             break;
         case "exit":
+            stopwatch.Stop();
             for (var i = 0; i < game.Rows - 1; i++)
             {
                 for (var j = 0; j < game.Columns; j++)
@@ -426,17 +433,17 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
     {
         case true:
         {
-            var leaderboardMonkey = await GameRepository.GetGamesMonkey(10);
+            var leaderboardMonkey = await GameRepository.GetGames(10, true);
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Встречайте, монки-мэны",
-                replyMarkup: remove
+                replyMarkup: replyKeyboardHello
             );
-            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Difficulty",-20}{"Score",-15}");
+            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Time",-15}");
             foreach (var game in leaderboardMonkey)
             {
-                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Difficulty,-20}{game.Score,-15}");
+                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Time,-15}");
             }
             await bot.SendTextMessageAsync
             (
@@ -447,17 +454,17 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
         }
         case false:
         {
-            var leaderboardJoski = await GameRepository.GetGamesJoski(10);
+            var leaderboardJoski = await GameRepository.GetGames(10, false);
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
                 text: "Встречайте, жоские челы",
-                replyMarkup: remove
+                replyMarkup: replyKeyboardHello
             );
-            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Difficulty",-15}{"Score",-15}");
+            sb.AppendLine($"{"Id",-5}{"Username",-25}{"Time",-15}");
             foreach (var game in leaderboardJoski)
             {
-                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Difficulty,-20}{game.Score,-15}");
+                sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Time,-15}");
             }
             await bot.SendTextMessageAsync
             (
