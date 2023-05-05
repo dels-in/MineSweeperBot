@@ -14,8 +14,7 @@ using Game = MineSweeperBot.Models.Game;
 using CancellationTokenSource cts = new();
 
 var userFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-var currentFolder = new[]
-    { userFolder, "RiderProjects", "MineSweeperBot" };
+var currentFolder = new[] { userFolder, "RiderProjects", "MineSweeperBot" };
 var dir = Path.Combine(currentFolder);
 var textFile = Path.Combine(dir, "Token.txt");
 
@@ -256,7 +255,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
             Username = callbackQuery.From.Username ?? "Анон",
             Time = score
         };
-        if (difficulty=="Монки-мэн")
+        if (difficulty == "Монки-мэн")
         {
             await GameRepository.AddGame(gameToAdd, true);
         }
@@ -264,6 +263,7 @@ async Task OnAnswer(ITelegramBotClient bot, CallbackQuery callbackQuery, long us
         {
             await GameRepository.AddGame(gameToAdd, false);
         }
+
         return;
     }
 
@@ -349,7 +349,7 @@ async Task HandleMove(ITelegramBotClient bot, CallbackQuery callbackQuery, long 
 
         game.Hidden[row, column] = false;
 
-        if (game.IsMine(row, column)) 
+        if (game.IsMine(row, column))
         {
             stopwatch.Stop();
             await bot.AnswerCallbackQueryAsync
@@ -445,6 +445,7 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
             {
                 sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Time,-15}");
             }
+
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
@@ -466,6 +467,7 @@ async Task SendLeaderboard(ITelegramBotClient bot, long chatId, bool level)
             {
                 sb.AppendLine($"{game.Id,-5}{game.Username,-25}{game.Time,-15}");
             }
+
             await bot.SendTextMessageAsync
             (
                 chatId: chatId,
