@@ -12,10 +12,9 @@ using static System.Int32;
 using Game = MineSweeperBot.Models.Game;
 
 using CancellationTokenSource cts = new();
-//fff
 
 var userFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-var currentFolder = new[] { userFolder, "RiderProjects", "MineSweeperBot" };
+var currentFolder = new[] { userFolder, "CSharpProjects", "MineSweeperBot" };
 var dir = Path.Combine(currentFolder);
 var textFile = Path.Combine(dir, "Token.txt");
 
