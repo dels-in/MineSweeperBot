@@ -12,6 +12,7 @@ using static System.Int32;
 using Game = MineSweeperBot.Models.Game;
 
 using CancellationTokenSource cts = new();
+//fff
 
 var userFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 var currentFolder = new[] { userFolder, "RiderProjects", "MineSweeperBot" };
