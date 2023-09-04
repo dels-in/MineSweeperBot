@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj": {}
+    "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj": {}
   },
   "projects": {
-    "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj": {
+    "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
+        "projectUniqueName": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
         "projectName": "MineSweeperBot",
-        "projectPath": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
+        "projectPath": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
         "packagesPath": "/Users/vlad/.nuget/packages/",
-        "outputPath": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/obj/",
+        "outputPath": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/vlad/.nuget/NuGet/NuGet.Config"
@@ -41,15 +41,15 @@
           "dependencies": {
             "Dapper": {
               "target": "Package",
-              "version": "[2.0.123, )"
+              "version": "[2.0.151, )"
             },
             "Npgsql": {
               "target": "Package",
-              "version": "[8.0.0-preview.3, )"
+              "version": "[7.0.4, )"
             },
             "Telegram.Bot": {
               "target": "Package",
-              "version": "[19.0.0-preview.2, )"
+              "version": "[19.0.0, )"
             }
           },
           "imports": [
@@ -68,7 +68,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.413/RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -2,22 +2,30 @@
   "version": 3,
   "targets": {
     "net6.0": {
-      "Dapper/2.0.123": {
+      "Dapper/2.0.151": {
         "type": "package",
         "compile": {
-          "lib/net5.0/Dapper.dll": {}
+          "lib/net5.0/Dapper.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net5.0/Dapper.dll": {}
+          "lib/net5.0/Dapper.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Microsoft.Extensions.Logging.Abstractions/6.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
@@ -26,61 +34,77 @@
       "Newtonsoft.Json/13.0.1": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         }
       },
-      "Npgsql/8.0.0-preview.3": {
+      "Npgsql/7.0.4": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/Npgsql.dll": {}
+          "lib/net6.0/Npgsql.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/Npgsql.dll": {}
+          "lib/net6.0/Npgsql.dll": {
+            "related": ".xml"
+          }
         }
       },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
-      "Telegram.Bot/19.0.0-preview.2": {
+      "Telegram.Bot/19.0.0": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "13.0.1"
         },
         "compile": {
-          "lib/net6.0/Telegram.Bot.dll": {}
+          "lib/net6.0/Telegram.Bot.dll": {
+            "related": ".pdb;.xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/Telegram.Bot.dll": {}
+          "lib/net6.0/Telegram.Bot.dll": {
+            "related": ".pdb;.xml"
+          }
         }
       }
     }
   },
   "libraries": {
-    "Dapper/2.0.123": {
-      "sha512": "RDFF4rBLLmbpi6pwkY7q/M6UXHRJEOerplDGE5jwEkP/JGJnBauAClYavNKJPW1yOTWRPIyfj4is3EaJxQXILQ==",
+    "Dapper/2.0.151": {
+      "sha512": "mMcZgx1lim0/i1Ozu+lgnBM4GwNIHpCuxV6BV2ovsEfZAXRAq4jb6RIhxGDcVjtmXMLPpdp85jHPdDjBMMwejw==",
       "type": "package",
-      "path": "dapper/2.0.123",
+      "path": "dapper/2.0.151",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Dapper.png",
-        "dapper.2.0.123.nupkg.sha512",
+        "dapper.2.0.151.nupkg.sha512",
         "dapper.nuspec",
         "lib/net461/Dapper.dll",
         "lib/net461/Dapper.xml",
@@ -169,25 +193,27 @@
         "packageIcon.png"
       ]
     },
-    "Npgsql/8.0.0-preview.3": {
-      "sha512": "WaHuFXg9cfh5rIJXzH4x206p7Miepd34GNZ7nLbq/3MG7mekYEz3/U7z5/SjyQN4GHzF/Z3ZK2CORIWUm5WeOw==",
+    "Npgsql/7.0.4": {
+      "sha512": "7UVPYy2RP0ci04PED1tc9ZCaTw/DfSdSkLiGEFCAvwMwsgA/bAluj1liNzP1IpN0MFofnOF0cm1zJfmbEuCehg==",
       "type": "package",
-      "path": "npgsql/8.0.0-preview.3",
+      "path": "npgsql/7.0.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "README.md",
+        "lib/net5.0/Npgsql.dll",
+        "lib/net5.0/Npgsql.xml",
         "lib/net6.0/Npgsql.dll",
         "lib/net6.0/Npgsql.xml",
         "lib/net7.0/Npgsql.dll",
         "lib/net7.0/Npgsql.xml",
-        "lib/net8.0/Npgsql.dll",
-        "lib/net8.0/Npgsql.xml",
+        "lib/netcoreapp3.1/Npgsql.dll",
+        "lib/netcoreapp3.1/Npgsql.xml",
         "lib/netstandard2.0/Npgsql.dll",
         "lib/netstandard2.0/Npgsql.xml",
         "lib/netstandard2.1/Npgsql.dll",
         "lib/netstandard2.1/Npgsql.xml",
-        "npgsql.8.0.0-preview.3.nupkg.sha512",
+        "npgsql.7.0.4.nupkg.sha512",
         "npgsql.nuspec",
         "postgresql.png"
       ]
@@ -217,10 +243,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Telegram.Bot/19.0.0-preview.2": {
-      "sha512": "gLNkJuhoBg4Erw+AypV7IChhMrM6pawL5s8yAtI/89euPv8y9fwewLzWlx8KEKzz3Tb/zfyRWidAcSw6kXANCw==",
+    "Telegram.Bot/19.0.0": {
+      "sha512": "Q16IOitgjGoaJOuqgKQy0FeF+hr/ncmlX2esrhCC7aiyhSX7roYEriWaGAHkQZR8QzbImjFfl4eQh2IxcnOrPg==",
       "type": "package",
-      "path": "telegram.bot/19.0.0-preview.2",
+      "path": "telegram.bot/19.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -231,16 +257,16 @@
         "lib/netstandard2.0/Telegram.Bot.pdb",
         "lib/netstandard2.0/Telegram.Bot.xml",
         "package-icon.png",
-        "telegram.bot.19.0.0-preview.2.nupkg.sha512",
+        "telegram.bot.19.0.0.nupkg.sha512",
         "telegram.bot.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Dapper >= 2.0.123",
-      "Npgsql >= 8.0.0-preview.3",
-      "Telegram.Bot >= 19.0.0-preview.2"
+      "Dapper >= 2.0.151",
+      "Npgsql >= 7.0.4",
+      "Telegram.Bot >= 19.0.0"
     ]
   },
   "packageFolders": {
@@ -249,11 +275,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
+      "projectUniqueName": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
       "projectName": "MineSweeperBot",
-      "projectPath": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
+      "projectPath": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
       "packagesPath": "/Users/vlad/.nuget/packages/",
-      "outputPath": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/obj/",
+      "outputPath": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/vlad/.nuget/NuGet/NuGet.Config"
@@ -283,15 +309,15 @@
         "dependencies": {
           "Dapper": {
             "target": "Package",
-            "version": "[2.0.123, )"
+            "version": "[2.0.151, )"
           },
           "Npgsql": {
             "target": "Package",
-            "version": "[8.0.0-preview.3, )"
+            "version": "[7.0.4, )"
           },
           "Telegram.Bot": {
             "target": "Package",
-            "version": "[19.0.0-preview.2, )"
+            "version": "[19.0.0, )"
           }
         },
         "imports": [
@@ -310,7 +336,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.413/RuntimeIdentifierGraph.json"
       }
     }
   }

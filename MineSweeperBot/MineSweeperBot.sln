@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1706.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MineSweeperBot", "MineSweeperBot.csproj", "{F8573B35-8D8D-4DCF-92FD-09D789869DED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8573B35-8D8D-4DCF-92FD-09D789869DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8573B35-8D8D-4DCF-92FD-09D789869DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8573B35-8D8D-4DCF-92FD-09D789869DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8573B35-8D8D-4DCF-92FD-09D789869DED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {936C7965-BA9E-44E9-96C2-D79307895F31}
+	EndGlobalSection
+EndGlobal

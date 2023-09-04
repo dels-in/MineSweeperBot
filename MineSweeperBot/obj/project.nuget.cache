@@ -1,15 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "BzdeFD8Hh4nYTh1Mj3f/AZPk6mvlkg0sZhWIKN6kXNeFgbgk3FEe5s2RLI0ccJ88GkdUa8PQD5ZepSP0JMpDIg==",
+  "dgSpecHash": "SFGQm9HFNsX0bcsl3BNxq9coK/z4BskWIOK7PQ0kLTWKRmKlcvtnPLb09I2kfYJGMYjttSsle1JhcPC/GMz6eA==",
   "success": true,
-  "projectFilePath": "/Users/vlad/RiderProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
+  "projectFilePath": "/Users/vlad/CSharpProjects/MineSweeperBot/MineSweeperBot/MineSweeperBot.csproj",
   "expectedPackageFiles": [
-    "/Users/vlad/.nuget/packages/dapper/2.0.123/dapper.2.0.123.nupkg.sha512",
+    "/Users/vlad/.nuget/packages/dapper/2.0.151/dapper.2.0.151.nupkg.sha512",
     "/Users/vlad/.nuget/packages/microsoft.extensions.logging.abstractions/6.0.0/microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512",
     "/Users/vlad/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
-    "/Users/vlad/.nuget/packages/npgsql/8.0.0-preview.3/npgsql.8.0.0-preview.3.nupkg.sha512",
+    "/Users/vlad/.nuget/packages/npgsql/7.0.4/npgsql.7.0.4.nupkg.sha512",
     "/Users/vlad/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
-    "/Users/vlad/.nuget/packages/telegram.bot/19.0.0-preview.2/telegram.bot.19.0.0-preview.2.nupkg.sha512"
+    "/Users/vlad/.nuget/packages/telegram.bot/19.0.0/telegram.bot.19.0.0.nupkg.sha512"
   ],
   "logs": []
 }
