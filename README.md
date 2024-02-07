@@ -1,3 +1,4 @@
 # MineSweeperBot
-Here you are able to find my efforts to make dreams come true. 
-So, that's it, enjoy
+Мой первый проект - телеграмм бот, который позволяет играть в "Сапера" на тг-кнопках в самом чате.
+Использовался Dapper для хранения результатов в БД (PostgreSQL).
+
