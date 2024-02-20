@@ -6,7 +6,6 @@
 2. Dapper
 3. PostgreSQL
 4. 
-![Image alt](https://github.com/dels-in/MineSweeperBot/raw/master/images/image.png)
+![Image alt](https://github.com/dels-in/MineSweeperBot/blob/main/Снимок%20экрана%202024-02-20%20в%2011.08.12.png)
 
-   ![Uploading image.png…]()
 
